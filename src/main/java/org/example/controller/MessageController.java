@@ -1,7 +1,8 @@
-package com.example.SocialMediaApplication.controller;
+package org.example.controller;
 
-import com.example.SocialMediaApplication.entity.Message;
-import com.example.SocialMediaApplication.service.MessageService;
+
+import org.example.entity.Message;
+import org.example.service.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

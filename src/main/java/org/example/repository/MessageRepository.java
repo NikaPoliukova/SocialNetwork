@@ -1,7 +1,8 @@
-package com.example.SocialMediaApplication.repository;
+package org.example.repository;
 
-import com.example.SocialMediaApplication.entity.Message;
-import com.example.SocialMediaApplication.entity.User;
+
+import org.example.entity.Message;
+import org.example.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,6 +1,7 @@
-package com.example.SocialMediaApplication.service;
+package org.example.service;
 
-import com.example.SocialMediaApplication.entity.Post;
+
+import org.example.entity.Post;
 
 import java.util.List;
 

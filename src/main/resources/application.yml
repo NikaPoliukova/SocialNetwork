@@ -9,22 +9,36 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     initialization-mode: always
   jpa:
-    hibernate:
-      ddl-auto: update
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
-jwt:
-  secret: your_secret_key
-  expiration-time: 864000000
-  token-prefix: Bearer
-  header-string: Authorization
 
-cloud:
-  aws:
-    credentials:
-      accessKey: YOUR_ACCESS_KEY
-      secretKey: YOUR_SECRET_KEY
-    region:
-      static: us-east-1
+aws:
+  region: "us-east-1"
+  s3:
+    endpoint: http://Localhost:4566
+  image-placeholder-path: /static/images/empty.png
+  accessKey: "foo"
+  secretKey: "bar"
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+security:
+  secretKey: "secretKeyNika"
+  refresh_secret: "secretRefresh"
+  allowed-origin: "http://localhost:3000"
+
+secret: "SECRET"
+
+jwt:
+  access_token_name: "JWT"
+  refresh_token_name: "JWT_REFRESH"
+
+csrf:
+  xsrf_cookie_name: 'XSRF'
+  xsrf_header_name: "X-XSRF"
+  cookie_domain: "localhost"
+
 

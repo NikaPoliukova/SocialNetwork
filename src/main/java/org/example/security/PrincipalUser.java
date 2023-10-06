@@ -1,4 +1,4 @@
-package com.example.tinywiny.security;
+package org.example.security;
 
 import lombok.EqualsAndHashCode;
 import lombok.Value;

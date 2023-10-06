@@ -1,2 +1,25 @@
-package org.example.service;public class HashPassService {
+package org.example.service;
+
+import at.favre.lib.crypto.bcrypt.BCrypt;
+import org.springframework.stereotype.Component;
+
+import java.security.SecureRandom;
+import org.springframework.beans.factory.annotation.Value;
+@Component
+public class HashPassService {
+
+  private final BCrypt.Hasher hasher;
+
+  public HashPassService(@Value("${secret}") String secret) {
+    hasher = BCrypt.with(new SecureRandom(secret.getBytes()));
+  }
+
+  public boolean verify(String password, String hashPass) {
+    final BCrypt.Result verify = BCrypt.verifyer().verify(password.getBytes(), hashPass.getBytes());
+    return verify.verified;
+  }
+
+  public String hashPass(String password) {
+    return hasher.hashToString(12, password.toCharArray());
+  }
 }

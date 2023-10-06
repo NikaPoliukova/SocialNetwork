@@ -1,7 +1,8 @@
-package com.example.users.config;
+package org.example.config;
 
 
-import com.example.users.AuthContext;
+
+import org.example.AuthContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;

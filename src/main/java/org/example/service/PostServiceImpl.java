@@ -1,10 +1,11 @@
-package com.example.SocialMediaApplication.service;
+package org.example.service;
 
-import com.example.SocialMediaApplication.entity.Post;
-import com.example.SocialMediaApplication.entity.User;
-import com.example.SocialMediaApplication.exception.PostNotFoundException;
-import com.example.SocialMediaApplication.exception.UserNotFoundException;
-import com.example.SocialMediaApplication.repository.PostRepository;
+
+import org.example.entity.Post;
+import org.example.entity.User;
+import org.example.exception.PostNotFoundException;
+import org.example.exception.UserNotFoundException;
+import org.example.repository.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

@@ -1,9 +1,10 @@
-package com.example.SocialMediaApplication.service;
+package org.example.service;
 
-import com.example.SocialMediaApplication.entity.Message;
-import com.example.SocialMediaApplication.entity.User;
-import com.example.SocialMediaApplication.repository.MessageRepository;
-import com.example.SocialMediaApplication.repository.UserRepository;
+
+import org.example.entity.Message;
+import org.example.entity.User;
+import org.example.repository.MessageRepository;
+import org.example.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

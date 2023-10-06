@@ -1,4 +1,4 @@
-package org.example.service.amazon.service;
+package org.example.service.amazonService;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;

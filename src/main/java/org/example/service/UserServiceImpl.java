@@ -1,27 +1,44 @@
-package com.example.SocialMediaApplication.service;
+package org.example.service;
 
 
-import com.example.SocialMediaApplication.entity.User;
-import com.example.SocialMediaApplication.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import org.example.converter.UserConverter;
+import org.example.dto.CredentialsDto;
+import org.example.entity.User;
+import org.example.exception.UserNotFoundException;
+import org.example.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
   private final UserRepository userRepository;
+  private final HashPassService hashPassService;
+  private final UserConverter userConverter;
   private final PasswordEncoder passwordEncoder;
 
-  @Autowired
-  public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
-    this.userRepository = userRepository;
-    this.passwordEncoder = passwordEncoder;
+
+  public User getUserByUserNameAndPassword(String name, String password) {
+    User user = userRepository.findByUsername(name);
+    if (hashPassService.verify(password, user.getPassword())) {
+      return user;
+    } else {
+      throw new RuntimeException("enter incorrect password or login");
+    }
+  }
+
+  public User getUserByUserName(String name) {
+    User user = userRepository.findByUsername(name);
+    if (user == null) {
+      throw new UserNotFoundException("User " + name + " not found");
+    }
+    return user;
   }
 
   @Override
@@ -37,19 +54,26 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  @Transactional
-  public User createUser(User user) {
-    return userRepository.save(user);
+
+  public User createUser(CredentialsDto credentialsDto) {
+    User user = userRepository.findByUsername(credentialsDto.getUsername());
+    if (user == null) {
+      throw new RuntimeException("User already exists");
+    } else {
+      user = userConverter.toUser(credentialsDto);
+      String hash = passwordEncoder.encode(credentialsDto.getPassword());
+      user.setPassword(hash);
+      userRepository.save(user);
+    }
+    return user;
   }
 
   @Override
-  @Transactional
   public User updateUser(Long id, User user) {
     User existingUser = userRepository.findById(id).orElse(null);
     if (existingUser != null) {
       existingUser.setUsername(user.getUsername());
       existingUser.setPassword(user.getPassword());
-      existingUser.setFullName(user.getFullName());
       existingUser.setEmail(user.getEmail());
       existingUser.setFollowing(user.getFollowing());
       return userRepository.save(existingUser);
@@ -58,62 +82,8 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  @Transactional
   public void deleteUser(Long id) {
     userRepository.deleteById(id);
-  }
-
-  @Override
-  @Transactional
-  public boolean followUser(Long followerId, Long followingId) {
-    User follower = userRepository.findById(followerId).orElse(null);
-    User following = userRepository.findById(followingId).orElse(null);
-    if (follower != null && following != null) {
-      if (!follower.getFollowing().contains(following)) {
-        follower.getFollowing().add(following);
-        userRepository.save(follower);
-        return true;
-      }
-    }
-    return false;
-  }
-
-  @Override
-  @Transactional
-  public void unfollowUser(Long followerId, Long followingId) {
-    User follower = userRepository.findById(followerId).orElse(null);
-    User following = userRepository.findById(followingId).orElse(null);
-    if (follower != null && following != null) {
-      follower.getFollowing().remove(following);
-      userRepository.save(follower);
-    }
-  }
-
-  @Override
-  @Transactional(readOnly = true)
-  public List<User> getFollowers(Long userId) {
-    User user = userRepository.findById(userId).orElse(null);
-    if (user != null) {
-      List<User> followers = userRepository.findByFollowersContains(user);
-      return followers != null ? followers : Collections.emptyList();
-    }
-    return Collections.emptyList();
-  }
-
-  @Override
-  @Transactional(readOnly = true)
-  public List<User> getFollowing(Long userId) {
-    Optional<User> userOptional = userRepository.findById(userId);
-    return userOptional.map(User::getFollowing).orElse(Collections.emptyList());
-  }
-
-  public Optional<User> registerUser(User user) {
-    if (userRepository.findByUsername(user.getUsername()) == null) {
-      // Хеширование пароля перед сохранением
-      user.setPassword(passwordEncoder.encode(user.getPassword()));
-      return Optional.of(userRepository.save(user));
-    }
-    return Optional.empty();
   }
 
   public Optional<User> loginUser(String username, String password) {

@@ -1,4 +1,4 @@
-package com.example.SocialMediaApplication.service;
+package org.example.service;
 
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;

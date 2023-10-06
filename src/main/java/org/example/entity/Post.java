@@ -1,12 +1,14 @@
-package com.example.SocialMediaApplication.entity;
+package org.example.entity;
 
 
+import javax.persistence.*;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import jakarta.persistence.*;
 import java.util.Date;
 
 @NoArgsConstructor
@@ -19,14 +21,15 @@ public class Post {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
-
-  @ManyToOne
-  @JoinColumn(name = "user_id")
-  private User user; // Пользователь, который опубликовал пост
-
   @Column(columnDefinition = "TEXT")
   private String content;
 
   @Temporal(TemporalType.TIMESTAMP)
   private Date timestamp;
+  @ManyToOne
+  @JsonIgnore
+  @JoinColumn(name = "user_id")
+  private User user; // Пользователь, который опубликовал пост
+
+
 }

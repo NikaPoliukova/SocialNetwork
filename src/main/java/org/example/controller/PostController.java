@@ -1,8 +1,9 @@
-package com.example.SocialMediaApplication.controller;
+package org.example.controller;
 
-import com.example.SocialMediaApplication.entity.Post;
-import com.example.SocialMediaApplication.exception.UserNotFoundException;
-import com.example.SocialMediaApplication.service.PostService;
+
+import org.example.entity.Post;
+import org.example.exception.UserNotFoundException;
+import org.example.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,7 +20,7 @@ public class PostController {
     this.postService = postService;
   }
 
-  @GetMapping("/")
+  @GetMapping()
   public List<Post> getAllPosts() {
     return postService.getAllPosts();
   }

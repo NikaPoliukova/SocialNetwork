@@ -1,7 +1,9 @@
-package com.example.SocialMediaApplication.controller;
+package org.example.controller;
 
-import com.example.SocialMediaApplication.entity.User;
-import com.example.SocialMediaApplication.service.UserService;
+
+import org.example.dto.CredentialsDto;
+import org.example.entity.User;
+import org.example.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,8 +31,8 @@ public class UserController {
   }
 
   @PostMapping
-  public User createUser(@RequestBody User user) {
-    return userService.createUser(user);
+  public User createUser(@RequestBody CredentialsDto credentialsDto) {
+    return userService.createUser(credentialsDto);
   }
 
   @PutMapping("/{id}")
@@ -43,23 +45,4 @@ public class UserController {
     userService.deleteUser(id);
   }
 
-  @PostMapping("/{followerId}/follow/{followingId}")
-  public boolean followUser(@PathVariable Long followerId, @PathVariable Long followingId) {
-    return userService.followUser(followerId, followingId);
-  }
-
-  @PostMapping("/{followerId}/unfollow/{followingId}")
-  public void unfollowUser(@PathVariable Long followerId, @PathVariable Long followingId) {
-    userService.unfollowUser(followerId, followingId);
-  }
-
-  @GetMapping("/{userId}/followers")
-  public List<User> getFollowers(@PathVariable Long userId) {
-    return userService.getFollowers(userId);
-  }
-
-  @GetMapping("/{userId}/following")
-  public List<User> getFollowing(@PathVariable Long userId) {
-    return userService.getFollowing(userId);
-  }
 }

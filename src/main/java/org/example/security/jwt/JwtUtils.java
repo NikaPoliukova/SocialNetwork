@@ -1,58 +1,111 @@
-package com.example.users.security.jwt;
+package org.example.security.jwt;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.JWTVerifier;
-import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.interfaces.DecodedJWT;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.User;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import org.example.entity.User;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Date;
-import java.util.List;
-import java.util.stream.Collectors;
 
+
+@Component
 public class JwtUtils {
-  public static String generateAccessToken(User user, String requestUrl, Algorithm algorithm) {
-    return JWT.create()
-        .withSubject(user.getUsername())
-        .withExpiresAt(new Date(System.currentTimeMillis() + 60 * 1000))
-        .withIssuer(requestUrl)
-        .withClaim("roles", user.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
-        .sign(algorithm);
+
+  @Value("${security.secretKey}")
+  private String secretKey;
+  @Value("${security.refresh_secret}")
+  private static String jwtRefreshSecret;
+
+  public String generateAccessToken(User user) {
+    Date expirationDate = generateExpirationDate(50);
+    return Jwts.builder()
+        .setSubject(user.getUsername())
+        .setExpiration(expirationDate)
+        .signWith(SignatureAlgorithm.HS512, secretKey)
+        .claim("userId", user.getId())
+        .compact();
   }
 
-  public static String generateRefreshToken(User user, String requestUrl, Algorithm algorithm) {
-    return JWT.create()
-        .withSubject(user.getUsername())
-        .withExpiresAt(new Date(System.currentTimeMillis() + 60 * 60 * 1000))
-        .withIssuer(requestUrl)
-        .withClaim("roles", user.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
-        .sign(algorithm);
+  public String generateRefreshToken(String login) {
+    Date expirationDate = generateExpirationDate(5000);
+    return Jwts.builder()
+        .setSubject(login)
+        .setExpiration(expirationDate)
+        .signWith(SignatureAlgorithm.HS512, secretKey)
+        .compact();
   }
 
-  public static String generateRefreshedAccessToken(String username, String requestUrl, String secretKey) {
-    Algorithm algorithm = Algorithm.HMAC256(secretKey.getBytes());
-    List<String> roles = new ArrayList<>();
-    roles.add("USER");
-    return JWT.create()
-        .withSubject(username)
-        .withExpiresAt(new Date(System.currentTimeMillis() + 60 * 60 * 1000))
-        .withIssuer(requestUrl)
-        .withClaim("roles", roles)
-        .sign(algorithm);
+  public String refreshAccessToken(String expiredToken) {
+    Claims claims;
+    try {
+      claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(expiredToken).getBody();
+    } catch (ExpiredJwtException e) {
+      claims = e.getClaims();
+    }
+    Date expirationDate = generateExpirationDate(50);
+    return Jwts.builder().setClaims(claims).setExpiration(expirationDate).signWith(SignatureAlgorithm.HS512, secretKey)
+        .compact();
   }
 
-  public static String getUsernameFromRefreshToken(String refreshToken, String secretKey) {
-    Algorithm algorithm = Algorithm.HMAC256(secretKey.getBytes());
-    JWTVerifier verifier = JWT.require(algorithm).build();
-    DecodedJWT decodedJWT = verifier.verify(refreshToken);
-    return decodedJWT.getSubject();
+  public boolean validateToken(String token, String secret) {
+    try {
+      Jwts.parser().setSigningKey(secret).parseClaimsJws(token);
+      return true;
+    } catch (Exception e) {
+    }
+    return false;
   }
 
-  public static DecodedJWT getDecodedJWTToken(String token, String secretKey) {
-    Algorithm algorithm = Algorithm.HMAC256(secretKey.getBytes());
-    JWTVerifier verifier = JWT.require(algorithm).build();
-    return verifier.verify(token);
+
+  public boolean validateAccessToken(String accessToken, String secret) {
+    return validateToken(accessToken, secret);
+  }
+
+  public boolean validateRefreshToken(String refreshToken, String secret) {
+    return validateToken(refreshToken, secret);
+  }
+
+  private String getLoginFromToken(String token, String secret) {
+    Claims claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
+    return claims.getSubject();
+  }
+
+  public String getLoginFromAccessToken(String token) {
+    return getLoginFromToken(token, secretKey);
+  }
+
+  public boolean isTokenExpired(String token) {
+    Date expiration = getExpirationDateFromToken(token);
+    return expiration.before(new Date());
+  }
+
+  public Date getExpirationDateFromToken(String token) {
+    Claims claims;
+    try {
+      claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody();
+    } catch (ExpiredJwtException e) {
+      claims = e.getClaims();
+    }
+    return claims.getExpiration();
+  }
+
+  private Date generateExpirationDate(int min) {
+    LocalDateTime now = LocalDateTime.now();
+    Instant accessExpirationInstant = now.plusMinutes(min).atZone(ZoneId.systemDefault()).toInstant();
+    return Date.from(accessExpirationInstant);
+  }
+
+  public Claims getTokenClaims(final String token) {
+    return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody();
+  }
+
+  public String getLoginFromRefreshToken(String token) {
+    return getLoginFromToken(token, secretKey);
   }
 }

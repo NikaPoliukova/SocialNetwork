@@ -1,13 +1,13 @@
-package com.example.SocialMediaApplication.entity;
+package org.example.entity;
 
 
-import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-
+import javax.persistence.*;
 import java.util.Date;
 
 @NoArgsConstructor
@@ -22,16 +22,18 @@ public class Message {
   private Long id;
 
   @ManyToOne
-  @JoinColumn(name = "sender_id")
-  private User sender; // Пользователь, отправивший сообщение
+  @JoinColumn(name = "sender_id", nullable = false)
+  private User sender;
 
-  @ManyToOne
-  @JoinColumn(name = "receiver_id")
-  private User receiver; // Пользователь, получивший сообщение
-
-  @Column(columnDefinition = "TEXT")
+  @Column(name = "content", length = 255)
   private String content;
 
-  @Temporal(TemporalType.TIMESTAMP)
+  @Column(name = "timestamp")
   private Date timestamp;
+
+  @ManyToOne
+  @JsonIgnore
+  @JoinColumn(name = "receiver_id", nullable = false)
+  private User receiver;
+
 }

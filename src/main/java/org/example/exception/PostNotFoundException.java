@@ -1,4 +1,4 @@
-package com.example.SocialMediaApplication.exception;
+package org.example.exception;
 
 public class PostNotFoundException extends RuntimeException {
 

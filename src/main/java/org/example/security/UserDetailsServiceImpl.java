@@ -1,11 +1,11 @@
-package com.example.tinywiny.security;
+package org.example.security;
 
 
-import com.example.tinywiny.model.User;
-import com.example.tinywiny.repository.UserRepository;
+
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
+import org.example.entity.User;
+import org.example.repository.UserRepository;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -23,8 +23,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
   @Override
   public UserDetails loadUserByUsername(final String userName) throws UsernameNotFoundException {
-    final User user = userRepository.getUserByUserName(userName);
-    return new PrincipalUser(user.getUserName(), user.getPassword(),
-        List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole())), user.getUserId());
+    final User user = userRepository.findByUsername(userName);
+    return new PrincipalUser(user.getUsername(), user.getPassword(),
+        List.of(new SimpleGrantedAuthority("ROLE_")), user.getId());
   }
 }

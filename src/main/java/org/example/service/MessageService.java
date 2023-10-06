@@ -1,6 +1,8 @@
-package com.example.SocialMediaApplication.service;
+package org.example.service;
 
-import com.example.SocialMediaApplication.entity.Message;
+
+
+import org.example.entity.Message;
 
 import java.util.List;
 import java.util.Optional;
