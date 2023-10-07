@@ -7,7 +7,6 @@ import org.example.dto.CredentialsDto;
 import org.example.entity.User;
 import org.example.exception.UserNotFoundException;
 import org.example.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
