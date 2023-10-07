@@ -1,6 +1,7 @@
 package org.example.service;
 
 
+import lombok.RequiredArgsConstructor;
 import org.example.entity.Post;
 import org.example.entity.User;
 import org.example.exception.PostNotFoundException;
@@ -13,16 +14,12 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+@RequiredArgsConstructor
 @Service
 public class PostServiceImpl implements PostService {
   private final PostRepository postRepository;
   private final UserService userService;
 
-  @Autowired
-  public PostServiceImpl(PostRepository postRepository, UserService userService) {
-    this.postRepository = postRepository;
-    this.userService = userService;
-  }
 
   @Override
   public List<Post> getAllPosts() {
@@ -37,7 +34,7 @@ public class PostServiceImpl implements PostService {
   }
 
   @Override
-  public Post createPost(Long userId, String content) throws UserNotFoundException {
+  public Post createPost(Long userId, String content) {
     User user = userService.getUserById(userId);
     if (user != null) {
       Post post = new Post();

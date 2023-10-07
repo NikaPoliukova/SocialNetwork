@@ -1,5 +1,6 @@
 package org.example.service;
 
+import lombok.RequiredArgsConstructor;
 import org.example.entity.UserFollowing;
 import org.example.repository.UserFollowingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,13 +10,9 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class UserFollowingServiceImpl implements UserFollowingService {
   private final UserFollowingRepository userFollowingRepository;
-
-  @Autowired
-  public UserFollowingServiceImpl(UserFollowingRepository userFollowingRepository) {
-    this.userFollowingRepository = userFollowingRepository;
-  }
 
   public List<UserFollowing> getAllUserFollowings() {
     return userFollowingRepository.findAll();

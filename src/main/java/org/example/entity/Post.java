@@ -29,7 +29,5 @@ public class Post {
   @ManyToOne
   @JsonIgnore
   @JoinColumn(name = "user_id")
-  private User user; // Пользователь, который опубликовал пост
-
-
+  private User user;
 }

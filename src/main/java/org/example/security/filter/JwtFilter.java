@@ -31,9 +31,6 @@ public class JwtFilter extends GenericFilterBean {
 
   public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse,
                        FilterChain filterChain) throws IOException, ServletException {
-    /*if (servletRequest.getServletPath().equals("/api/v1/login") || servletRequest.getServletPath().equals("/api/v1/registration")) {
-      filterChain.doFilter(servletRequest, servletResponse);
-    } else {*/
     String token = getTokenFromRequest((HttpServletRequest) servletRequest);
     if (token != null && jwtUtils.validateAccessToken(token,secretKey)) {
       String userName = jwtUtils.getLoginFromAccessToken(token);
@@ -82,5 +79,4 @@ public class JwtFilter extends GenericFilterBean {
         customUserDetails, null, customUserDetails.getAuthorities());
     SecurityContextHolder.getContext().setAuthentication(auth);
   }
-
 }
