@@ -1,24 +1,20 @@
 package org.example.controller;
 
 
+import lombok.RequiredArgsConstructor;
 import org.example.entity.Post;
 import org.example.exception.UserNotFoundException;
 import org.example.service.PostService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/posts")
 public class PostController {
 
   private final PostService postService;
-
-  @Autowired
-  public PostController(PostService postService) {
-    this.postService = postService;
-  }
 
   @GetMapping()
   public List<Post> getAllPosts() {

@@ -131,12 +131,14 @@
                 </executions>
                 <configuration>
                     <excludes>
-                        <exclude>com/example/bookstore/SocialNetworkApplication.class</exclude>
-                        <exclude>com/example/entity/**</exclude>
-                        <exclude>com/example/AuthContext.class</exclude>
-                        <exclude>com/example/converter/**</exclude>
-                        <exclude>com/example/dto/**</exclude>
-                        <exclude>com/example/config/**</exclude>
+                        <exclude>org/example/bookstore/SocialNetworkApplication.class</exclude>
+                        <exclude>org/example/entity/**</exclude>
+                        <exclude>org/example/AuthContext.class</exclude>
+                        <exclude>org/example/converter/**</exclude>
+                        <exclude>org/example/exception/**</exclude>
+                        <exclude>org/example/dto/**</exclude>
+                        <exclude>org/example/config/**</exclude>
+                        <exclude>org/example/service/HashPassService.class</exclude>
                     </excludes>
                 </configuration>
             </plugin>

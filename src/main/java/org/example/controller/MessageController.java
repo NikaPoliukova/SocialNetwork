@@ -1,6 +1,7 @@
 package org.example.controller;
 
 
+import lombok.RequiredArgsConstructor;
 import org.example.entity.Message;
 import org.example.service.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,15 +13,11 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/messages")
 public class MessageController {
 
   private final MessageService messageService;
-
-  @Autowired
-  public MessageController(MessageService messageService) {
-    this.messageService = messageService;
-  }
 
   @PostMapping("/send")
   public ResponseEntity<Message> sendMessage(@RequestParam Long senderId,

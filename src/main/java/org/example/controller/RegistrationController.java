@@ -1,7 +1,6 @@
 package org.example.controller;
 
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
 import org.example.converter.UserConverter;
 import org.example.dto.CredentialsDto;
 import org.example.service.UserService;
@@ -10,11 +9,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@Slf4j
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/registration")
-@AllArgsConstructor
-public class RegistrationRestController {
+public class RegistrationController {
 
   private final UserService userService;
   private final UserConverter userConverter;

@@ -1,22 +1,18 @@
 package org.example.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.example.entity.UserFollowing;
 import org.example.service.UserFollowingService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/user-followings")
 public class UserFollowingController {
   private final UserFollowingService userFollowingService;
-
-  @Autowired
-  public UserFollowingController(UserFollowingService userFollowingService) {
-    this.userFollowingService = userFollowingService;
-  }
 
   @GetMapping
   public List<UserFollowing> getAllUserFollowings() {
