@@ -87,4 +87,5 @@ public class UserServiceImpl implements UserService {
     Optional<User> userOptional = Optional.ofNullable(userRepository.findByUsername(username));
     return userOptional.filter(user -> passwordEncoder.matches(password, user.getPassword()));
   }
+
 }

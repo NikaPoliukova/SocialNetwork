@@ -2,6 +2,7 @@ package org.example.service;
 
 import org.example.converter.UserConverter;
 import org.example.entity.User;
+import org.example.exception.UserNotFoundException;
 import org.example.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -64,4 +65,53 @@ public class UserServiceImplTest {
     }
   }
 
+  @Test
+  void testGetUserByUserName_ValidUser() {
+    User fakeUser = new User();
+    fakeUser.setUsername("testUser");
+    when(userRepository.findByUsername("testUser")).thenReturn(fakeUser);
+    User result = userServiceImpl.getUserByUserName("testUser");
+    assertNotNull(result);
+    assertEquals(fakeUser, result);
+  }
+
+  @Test
+  void testGetUserByUserName_UserNotFound() {
+    when(userRepository.findByUsername("nonExistentUser")).thenReturn(null);
+    assertThrows(UserNotFoundException.class, () -> {
+      userServiceImpl.getUserByUserName("nonExistentUser");
+    });
+  }
+
+  @Test
+  void testGetAllUsers() {
+    User user1 = new User();
+    user1.setId(1L);
+    user1.setUsername("user1");
+    User user2 = new User();
+    user2.setId(2L);
+    user2.setUsername("user2");
+    List<User> fakeUsers = Arrays.asList(user1, user2);
+    when(userRepository.findAll()).thenReturn(fakeUsers);
+    List<User> result = userServiceImpl.getAllUsers();
+    assertNotNull(result);
+    assertEquals(fakeUsers, result);
+  }
+
+  @Test
+  void testGetUserById_UserExists() {
+    User fakeUser = new User();
+    fakeUser.setId(1L);
+    when(userRepository.findById(1L)).thenReturn(java.util.Optional.of(fakeUser));
+    User result = userServiceImpl.getUserById(1L);
+    assertNotNull(result);
+    assertEquals(fakeUser, result);
+  }
+
+  @Test
+  void testGetUserById_UserNotFound() {
+    when(userRepository.findById(2L)).thenReturn(java.util.Optional.empty());
+    User result = userServiceImpl.getUserById(2L);
+    assertNull(result);
+  }
 }
