@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 import org.example.dto.CredentialsDto;
 import org.example.entity.User;
 import org.example.service.UserService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,8 +29,9 @@ public class UserController {
   }
 
   @PostMapping
-  public User createUser(@RequestBody CredentialsDto credentialsDto) {
-    return userService.createUser(credentialsDto);
+  public ResponseEntity<User> createUser(@RequestBody CredentialsDto credentialsDto) {
+    User newUser = userService.createUser(credentialsDto);
+    return ResponseEntity.status(HttpStatus.CREATED).body(newUser);
   }
 
   @PutMapping("/{id}")
