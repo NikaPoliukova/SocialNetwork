@@ -2,17 +2,14 @@ package org.example.entity;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@NoArgsConstructor
-@AllArgsConstructor
+
+@RequiredArgsConstructor
 @Getter
 @Setter
 @Entity
@@ -22,13 +19,13 @@ public class User {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @Column(name = "username", unique = true, nullable = false, length = 255)
+  @Column(name = "username", unique = true)
   private String username;
 
-  @Column(name = "password", nullable = false, length = 255)
+  @Column(name = "password")
   private String password;
 
-  @Column(name = "email", length = 255)
+  @Column(name = "email")
   private String email;
 
   @OneToMany(mappedBy = "user")

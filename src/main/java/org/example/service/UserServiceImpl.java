@@ -42,19 +42,16 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  @Transactional(readOnly = true)
   public List<User> getAllUsers() {
     return userRepository.findAll();
   }
 
   @Override
-  @Transactional(readOnly = true)
   public User getUserById(Long id) {
     return userRepository.findById(id).orElse(null);
   }
 
   @Override
-
   public User createUser(CredentialsDto credentialsDto) {
     User user = userRepository.findByUsername(credentialsDto.getUsername());
     if (user != null) {
