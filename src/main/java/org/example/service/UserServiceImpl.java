@@ -9,7 +9,6 @@ import org.example.exception.UserNotFoundException;
 import org.example.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -67,15 +66,13 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public User updateUser(Long id, User user) {
-    User existingUser = userRepository.findById(id).orElse(null);
-    if (existingUser != null) {
-      existingUser.setUsername(user.getUsername());
-      existingUser.setPassword(user.getPassword());
-      existingUser.setEmail(user.getEmail());
-      existingUser.setFollowing(user.getFollowing());
-      return userRepository.save(existingUser);
-    }
-    return null;
+    User existingUser = userRepository.findById(id)
+        .orElseThrow(() -> new UserNotFoundException("User with ID " + id + " not found"));
+    existingUser.setUsername(user.getUsername());
+    existingUser.setPassword(user.getPassword());
+    existingUser.setEmail(user.getEmail());
+    existingUser.setFollowing(user.getFollowing());
+    return userRepository.save(existingUser);
   }
 
   @Override

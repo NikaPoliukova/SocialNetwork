@@ -1,6 +1,7 @@
 package org.example.service;
 
 import org.example.converter.UserConverter;
+import org.example.dto.CredentialsDto;
 import org.example.entity.User;
 import org.example.exception.UserNotFoundException;
 import org.example.repository.UserRepository;
@@ -13,7 +14,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -113,5 +116,76 @@ public class UserServiceImplTest {
     when(userRepository.findById(2L)).thenReturn(java.util.Optional.empty());
     User result = userServiceImpl.getUserById(2L);
     assertNull(result);
+  }
+
+  @Test
+  void testCreateUser_UserAlreadyExists() {
+    User existingUser = new User();
+    existingUser.setUsername("testUser");
+    when(userRepository.findByUsername("testUser")).thenReturn(existingUser);
+    CredentialsDto credentialsDto = new CredentialsDto();
+    credentialsDto.setUsername("testUser");
+    assertThrows(RuntimeException.class, () -> {
+      userServiceImpl.createUser(credentialsDto);
+    });
+  }
+
+  @Test
+  void testCreateUser_SuccessfulCreation() {
+    when(userRepository.findByUsername("newUser")).thenReturn(null);
+    CredentialsDto credentialsDto = new CredentialsDto();
+    credentialsDto.setUsername("newUser");
+    credentialsDto.setPassword("password");
+    User newUser = new User();
+    when(userConverter.toUser(credentialsDto)).thenReturn(newUser);
+    when(passwordEncoder.encode("password")).thenReturn("hashedPassword");
+    when(userRepository.save(newUser)).thenReturn(newUser);
+    User result = userServiceImpl.createUser(credentialsDto);
+    assertNotNull(result);
+    assertEquals("newUser", credentialsDto.getUsername());
+    assertEquals("hashedPassword", result.getPassword());
+    verify(userRepository, times(1)).save(newUser);
+  }
+
+  @Test
+  void testUpdateUser_UserNotFound() {
+    when(userRepository.findById(1L)).thenReturn(Optional.empty());
+    assertThrows(UserNotFoundException.class, () -> {
+      userServiceImpl.updateUser(1L, new User());
+    });
+  }
+  @Test
+  void testDeleteUser_ValidId() {
+    Long userIdToDelete = 1L;
+    userServiceImpl.deleteUser(userIdToDelete);
+    verify(userRepository, times(1)).deleteById(userIdToDelete);
+  }
+  @Test
+  void testLoginUser_ValidCredentials() {
+    User fakeUser = new User();
+    fakeUser.setUsername("testUser");
+    fakeUser.setPassword("hashedPassword");
+    when(userRepository.findByUsername("testUser")).thenReturn(fakeUser);
+    when(passwordEncoder.matches("password", "hashedPassword")).thenReturn(true);
+    Optional<User> result = userServiceImpl.loginUser("testUser", "password");
+    assertThat(result).isPresent().contains(fakeUser);
+  }
+
+  @Test
+  void testLoginUser_InvalidCredentials() {
+    User fakeUser = new User();
+    fakeUser.setUsername("testUser");
+    fakeUser.setPassword("hashedPassword");
+    when(userRepository.findByUsername("testUser")).thenReturn(fakeUser);
+    when(passwordEncoder.matches("incorrectPassword", "hashedPassword")).thenReturn(false);
+    Optional<User> result = userServiceImpl.loginUser("testUser", "incorrectPassword");
+    assertThat(result).isEmpty();
+  }
+
+  @Test
+  void testLoginUser_UserNotFound() {
+    when(userRepository.findByUsername("nonExistentUser")).thenReturn(null);
+    Optional<User> result = userServiceImpl.loginUser("nonExistentUser", "password");
+    assertThat(result).isEmpty();
   }
 }
